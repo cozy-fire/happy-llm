@@ -341,4 +341,5 @@ def main():
 
 if __name__ == "__main__":
     print("开始")
+    args = ModelArgs(100, 10, 100, 0.1, 512, 1000, 1000, 2)
     main()
