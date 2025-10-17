@@ -7,11 +7,11 @@ import torch.nn.functional as F
 
 @dataclass
 class ModelArgs:
-    n_embd: int # 嵌入维度
+    n_embd: int # 词向量维度
     n_heads: int # 头数
     dim: int # 模型维度
     dropout: float
-    max_seq_len: int
+    max_seq_len: int # 最大文本长度
     vocab_size: int
     block_size: int
     n_layer: int
@@ -142,10 +142,11 @@ class EncoderLayer(nn.Module):
         self.feed_forward = MLP(args.dim, args.dim, args.dropout)
 
     def forward(self, x):
+        # 根据 https://ar5iv.labs.arxiv.org/html/2002.04745?_immersive_translate_auto_translate=1修改结构
         # Layer Norm
-        x = self.attention_norm(x)
+        norm_x = self.attention_norm(x)
         # 自注意力
-        h = x + self.attention.forward(x, x, x)
+        h = x + self.attention.forward(norm_x, norm_x, norm_x)
         # 经过前馈神经网络
         out = h + self.feed_forward.forward(self.fnn_norm(h))
         return out
